@@ -10,6 +10,8 @@ public class behaviour : MonoBehaviour
     public GameObject startText;
     public GameObject tmp;
     private float displayTime;
+    private float secondsCount;
+    private int minuteCount;
     private bool showText;
     private bool showGui;
     public Material newMaterial1;
@@ -36,17 +38,19 @@ public class behaviour : MonoBehaviour
     private int currentState;
     public TextMeshPro TextMeshP;
     public GameObject PlayerText;
+    public TextMeshPro TextMeshPTimer;
+    public GameObject TimerText;
 
     public GameObject PlayerCharacter;
 
-	private bool challengeDone;
-	private float angleToPosition;
+    private bool challengeDone;
+    private float angleToPosition;
 
-	private bool antEyeRunning;
+    private bool antEyeRunning;
 
-	private float lastAnglePosition;
+    private float lastAnglePosition;
 
-	public Brightness BrightnessRef; 
+    public Brightness BrightnessRef;
 
     public GameObject secondCupcake;
     public Transform spawnPoint;
@@ -81,10 +85,9 @@ public class behaviour : MonoBehaviour
         tornadoZone = false;
         currentState = 0;
         gameOver = false;
-		challengeDone = false;
-		antEyeRunning = false;
+        challengeDone = false;
+        antEyeRunning = false;
 
-        
         StartCoroutine(displayTutorialText());
 
         Debug.Log("Current State: " + currentState);
@@ -100,35 +103,51 @@ public class behaviour : MonoBehaviour
 
 
 
-		if (challengeDone) {
-			GameObject player = GameObject.FindGameObjectWithTag ("Player");
-			Rigidbody playerRigidBody = player.GetComponent<Rigidbody> ();
-			OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
-			Vector3 targetDir = nest.transform.position - transform.position;
-			targetDir = targetDir.normalized;
-			float dot = Vector3.Dot (targetDir, transform.forward);
-			angleToPosition = Mathf.Acos (dot) * Mathf.Rad2Deg;
-			Debug.Log (angleToPosition);
-			Debug.Log ("Nest Position " + nest.transform.position);
-			Debug.Log ("Player position " + transform.position);
-			Debug.Log ("Target Direction " + targetDir);
-			StartCoroutine (displayChallengeResult ());
-			challengeDone = false;
-			controller.SetMoveScaleMultiplier (1f);
-			playerRigidBody.freezeRotation = false;
-			//antEyeRunning = true;
-			//StartCoroutine (antEyeText ());
+        if (TextMeshPTimer.text != "" && !(hasFood & currentState == 2))
+        {
+            secondsCount += Time.deltaTime;
+            TextMeshPTimer.text = minuteCount.ToString("00") + ":" + ((int)secondsCount).ToString("00");
+            if (secondsCount >= 60)
+            {
+                minuteCount++;
+                secondsCount -= 60;
+            }
+        }
 
-		}
 
-		if (antEyeRunning) {
 
-			Vector3 targetDir = nest.transform.position - transform.position;
-			targetDir = targetDir.normalized;
-			float dot = Vector3.Dot (targetDir, transform.forward);
-			angleToPosition = Mathf.Acos (dot) * Mathf.Rad2Deg;
 
-			/* if (angleToPosition < 10) {
+        if (challengeDone)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
+            OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+            Vector3 targetDir = nest.transform.position - transform.position;
+            targetDir = targetDir.normalized;
+            float dot = Vector3.Dot(targetDir, transform.forward);
+            angleToPosition = Mathf.Acos(dot) * Mathf.Rad2Deg;
+            Debug.Log(angleToPosition);
+            Debug.Log("Nest Position " + nest.transform.position);
+            Debug.Log("Player position " + transform.position);
+            Debug.Log("Target Direction " + targetDir);
+            StartCoroutine(displayChallengeResult());
+            challengeDone = false;
+            controller.SetMoveScaleMultiplier(1f);
+            playerRigidBody.freezeRotation = false;
+            //antEyeRunning = true;
+            //StartCoroutine (antEyeText ());
+
+        }
+
+        if (antEyeRunning)
+        {
+
+            Vector3 targetDir = nest.transform.position - transform.position;
+            targetDir = targetDir.normalized;
+            float dot = Vector3.Dot(targetDir, transform.forward);
+            angleToPosition = Mathf.Acos(dot) * Mathf.Rad2Deg;
+
+            /* if (angleToPosition < 10) {
 				BrightnessRef.brightness = 1.6f;
 			}
 			if (angleToPosition > 10 & angleToPosition < 20) {
@@ -186,8 +205,8 @@ public class behaviour : MonoBehaviour
             else {
                 BrightnessRef.brightness = 1.5f  * (1.5f/angleToPosition);
             }  */
-            BrightnessRef.brightness = 1.2f  * (1f/angleToPosition);
-			/*if (angleToPosition < lastAnglePosition) {
+            BrightnessRef.brightness = 1.2f * (1f / angleToPosition);
+            /*if (angleToPosition < lastAnglePosition) {
 				BrightnessRef.brightness = (1.5f * angleToPosition) / 180;
 			}
 			if (angleToPosition > lastAnglePosition) {
@@ -195,10 +214,10 @@ public class behaviour : MonoBehaviour
 			}*/
 
 
-			lastAnglePosition = angleToPosition;
+            lastAnglePosition = angleToPosition;
 
-			Debug.Log (RenderSettings.ambientLight);
-		}
+            Debug.Log(RenderSettings.ambientLight);
+        }
 
         /* bn   
         
@@ -263,26 +282,33 @@ public class behaviour : MonoBehaviour
     IEnumerator displayTutorialText()
     {
         PlayerText.SetActive(true);
-		yield return new WaitUntil(() => Input.anyKey);
+        yield return new WaitUntil(() => Input.anyKey);
         PlayerText.SetActive(false);
         TextMeshP.text = "We need your help!";
         TextMeshP.color = new Color(0, 0, 0);
         TextMeshP.fontSize = 18;
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        //yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
         TextMeshP.text = "Find some food and bring it home!";
         PlayerText.SetActive(true);
-		yield return new WaitForSeconds (4);
+        //yield return new WaitForSeconds (4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Note that you will be timed while doing this";
+        PlayerText.SetActive(true);
+        //yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
         TextMeshP.text = "Use the joystick to move forward";
         PlayerText.SetActive(true);
-		yield return new WaitForSeconds (4);
+        //yield return new WaitForSeconds (4);
         PlayerText.SetActive(false);
         TextMeshP.text = "Rotate your head to change direction";
         PlayerText.SetActive(true);
-		yield return new WaitForSeconds (4);
+        //yield return new WaitForSeconds (4);
         PlayerText.SetActive(false);
+        TextMeshPTimer.text = "00:00";
+        TextMeshPTimer.color = new Color(255, 255, 255, 0.5f);
+        TimerText.SetActive(true);
     }
 
     IEnumerator displayFoundFoodText()
@@ -290,101 +316,112 @@ public class behaviour : MonoBehaviour
         TextMeshP.text = "You have found some food";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
-		PlayerText.SetActive (false);
+        PlayerText.SetActive(false);
 
     }
 
-	IEnumerator displayChallangeText()
-	{
-		TextMeshP.text = "Now you need to take the food back!";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(4);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "Which direction do you think home is?";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds(4);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "Turn towards it";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (2);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "You have <color=red>5</color> seconds";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "5";
-		TextMeshP.color = new Color(255, 0, 0);
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "4";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "3";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "2";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "1";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		challengeDone = true;
+    IEnumerator displayChallangeText()
+    {
+        TextMeshP.text = "Congratulations! You have found all the food in " + minuteCount + " minutes and " + secondsCount + " seconds.";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TimerText.SetActive(false);
+        TextMeshP.text = "Now you need to take the food back!";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Which direction do you think home is?";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Turn towards it";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(2);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "You have <color=red>5</color> seconds";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "5";
+        TextMeshP.color = new Color(255, 0, 0);
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "4";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "3";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "2";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "1";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        challengeDone = true;
 
-	}
+    }
 
-	IEnumerator displayChallengeResult() {
-		TextMeshP.faceColor = new Color (255, 255, 255);
+    IEnumerator displayChallengeResult()
+    {
+        TextMeshP.faceColor = new Color(255, 255, 255);
         TextMeshP.color = new Color(255, 255, 255);
-		TextMeshP.richText = true;
-        if (angleToPosition < 45) {
-            TextMeshP.text = "YOU WERE OUT BY " + "<color=green>" + angleToPosition +  "</color> DEGREES";
+        TextMeshP.richText = true;
+        if (angleToPosition < 45)
+        {
+            TextMeshP.text = "YOU WERE OUT BY " + "<color=green>" + angleToPosition + "</color> DEGREES";
         }
-        else if (angleToPosition < 90) {
-            TextMeshP.text = "YOU WERE OUT BY " + "<color=yellow>" + angleToPosition +  "</color> DEGREES";
+        else if (angleToPosition <= 90)
+        {
+            TextMeshP.text = "YOU WERE OUT BY " + "<color=yellow>" + angleToPosition + "</color> DEGREES";
         }
-        else if (angleToPosition > 90) {
-            TextMeshP.text = "YOU WERE OUT BY " + "<color=red>" + angleToPosition +  "</color> DEGREES";
+        //else if (angleToPosition > 90) {
+        else
+        {
+            TextMeshP.text = "YOU WERE OUT BY " + "<color=red>" + angleToPosition + "</color> DEGREES";
         }
-		//TextMeshP.text = "YOU WERE OUT BY " + "<color=" + guessColor + ">" + angleToPosition +  "</color> DEGREES";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-		PlayerText.SetActive (false);
-        TextMeshP.color = new Color(255,255,255);
-		TextMeshP.text = "Ants see the world differently";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-        PlayerText.SetActive (false);
-		TextMeshP.text = "They see polarised light";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-		PlayerText.SetActive (false);
+        //TextMeshP.text = "YOU WERE OUT BY " + "<color=" + guessColor + ">" + angleToPosition +  "</color> DEGREES";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.color = new Color(255, 255, 255);
+        TextMeshP.text = "Ants see the world differently";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "They see polarised light";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
         TextMeshP.text = "They use this to navigate";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "We are giving you an <color=red>ANT EYE</color>";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "Use it to find home!";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
-        PlayerText.SetActive (false);
-		TextMeshP.text = "Hint : look around slowly!";
-		PlayerText.SetActive (true);
-		yield return new WaitForSeconds (4);
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "We are giving you an <color=red>ANT EYE</color>";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Use it to find home!";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Hint : look around slowly!";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
         antEyeRunning = true;
         yield return new WaitForSeconds(8);
-		PlayerText.SetActive (false);
+        PlayerText.SetActive(false);
         //antEyeRunning = true;
-	}
+    }
 
-    IEnumerator findMoreFoodText() {
+    IEnumerator findMoreFoodText()
+    {
         TextMeshP.text = "Well done!";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(2);
@@ -399,7 +436,8 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(false);
     }
 
-    IEnumerator lastFoodText() {
+    IEnumerator lastFoodText()
+    {
         TextMeshP.text = "Almost there!";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
@@ -414,7 +452,7 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(false);
     }
 
-     IEnumerator displayFinishedText()
+    IEnumerator displayFinishedText()
     {
         PlayerText.SetActive(false);
         TextMeshP.text = "Congratulations!";
@@ -424,40 +462,40 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(false);
         TextMeshP.text = "You have completed <color=red>the Ant Navigation Challenge!</color>";
         PlayerText.SetActive(true);
-		yield return new WaitForSeconds (4);
+        yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
         TextMeshP.text = "Want to know more?";
         PlayerText.SetActive(true);
-		yield return new WaitForSeconds (4);
+        yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
         TextMeshP.text = "Ask us a question!";
         PlayerText.SetActive(true);
     }
 
-	IEnumerator countdownTimerText()
-	{
-		TextMeshP.text = "5";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "4";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "3";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "2";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
-		TextMeshP.text = "1";
-		PlayerText.SetActive(true);
-		yield return new WaitForSeconds(1);
-		PlayerText.SetActive (false);
+    IEnumerator countdownTimerText()
+    {
+        TextMeshP.text = "5";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "4";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "3";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "2";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "1";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
 
-	}
+    }
 
     /* IEnumerator displayTutorial()
     {
@@ -529,26 +567,29 @@ public class behaviour : MonoBehaviour
             // Compass 
             //StartCoroutine(displayFoundFoodText());
             hasFood = true;
-            if (hasFood & currentState == 0) {
+            if (hasFood & currentState == 0)
+            {
                 StartCoroutine(findMoreFoodText());
                 Instantiate(secondCupcake, spawnPoint.position, spawnPoint.rotation);
             }
-            if (hasFood & currentState == 1) {
+            if (hasFood & currentState == 1)
+            {
                 StartCoroutine(lastFoodText());
                 Instantiate(thirdCupcake, spawnPoint2.position, spawnPoint2.rotation);
             }
-			if (hasFood & currentState == 2) {
-				GameObject player = GameObject.FindGameObjectWithTag ("Player");
-				Rigidbody playerRigidBody = player.GetComponent<Rigidbody> ();
-				OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
-				controller.SetMoveScaleMultiplier (0f);
-				StartCoroutine (displayChallangeText ());
-				playerRigidBody.freezeRotation = true;
+            if (hasFood & currentState == 2)
+            {
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
+                OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+                controller.SetMoveScaleMultiplier(0f);
+                StartCoroutine(displayChallangeText());
+                playerRigidBody.freezeRotation = true;
                 //Vector3 toPosition = (nest.transform.position - transform.position);
-				//float angleToPosition = Vector3.Angle (transform.forward, toPosition);
-				Debug.Log(challengeDone);
-				//StartCoroutine (countdownTimerText ()); 
-			}
+                //float angleToPosition = Vector3.Angle (transform.forward, toPosition);
+                Debug.Log(challengeDone);
+                //StartCoroutine (countdownTimerText ()); 
+            }
 
             //compass.GetComponent<Compass>().setTarget(nest.transform);
             //compass.GetComponent<Renderer>().material = GreenArrow;
@@ -558,13 +599,13 @@ public class behaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Nest"))
         {
             if (hasFood)
-            {   
+            {
                 antEyeRunning = false;
                 BrightnessRef.brightness = 1f;
-                GameObject player = GameObject.FindGameObjectWithTag ("Player");
-				Rigidbody playerRigidBody = player.GetComponent<Rigidbody> ();
-				OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
-				controller.SetMoveScaleMultiplier (0f);
+                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
+                OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+                controller.SetMoveScaleMultiplier(0f);
                 StartCoroutine(displayFinishedText());
                 //StartCoroutine(displayChageVector());
                 //hasFood = false;

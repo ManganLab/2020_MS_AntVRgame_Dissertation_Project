@@ -53,20 +53,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\AntialiasingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\BloomAndFlaresEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\BloomEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\CameraMotionBlurEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\ColorCorrectionCurvesEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\ColorCorrectionLookupEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\CreaseShadingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\DepthOfFieldDeprecatedEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\DepthOfFieldEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\EdgeDetectionEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\NoiseAndGrainEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\SunShaftsEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\TonemappingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\VignetteAndChromaticAberrationEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\AntialiasingEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\BloomAndFlaresEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\BloomEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\CameraMotionBlurEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\ColorCorrectionCurvesEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\ColorCorrectionLookupEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\CreaseShadingEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\DepthOfFieldDeprecatedEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\DepthOfFieldEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\EdgeDetectionEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\NoiseAndGrainEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\SunShaftsEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\TonemappingEditor.cs" />
+     <Compile Include="Assets\standard assets\Editor\ImageEffects\VignetteAndChromaticAberrationEditor.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>G:/Letöltések/mindenféle/University/Dissertation Project/Dissertation-Project/ant_orig/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>
@@ -329,7 +329,7 @@
  <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.15f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="System.Drawing">
- <HintPath>G:/Letöltések/mindenféle/University/Dissertation Project/Dissertation-Project/ant_orig/Assets/msc2017/Assetstore/CapturePanorama/Managed Plugins/System.Drawing.dll</HintPath>
+ <HintPath>G:/Letöltések/mindenféle/University/Dissertation Project/Dissertation-Project/ant_orig/Assets/msc2017/assetstore/capturepanorama/Managed Plugins/System.Drawing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Users/hamsa/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
