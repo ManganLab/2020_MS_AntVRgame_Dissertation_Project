@@ -41,6 +41,8 @@ public class behaviour : MonoBehaviour
     public TextMeshPro TextMeshPTimer;
     public GameObject TimerText;
 
+    private bool timerOn;
+
     public GameObject PlayerCharacter;
 
     private bool challengeDone;
@@ -59,6 +61,8 @@ public class behaviour : MonoBehaviour
     public Transform spawnPoint2;
 
     private Color guessColor;
+
+    private leaderboard leaderboard;
 
     // 0 SearchFreelyForFood
     // 1 Food found and bring it back home
@@ -87,8 +91,12 @@ public class behaviour : MonoBehaviour
         gameOver = false;
         challengeDone = false;
         antEyeRunning = false;
+        timerOn = false;
 
         StartCoroutine(displayTutorialText());
+
+        leaderboard = new leaderboard();
+        PlayerInfo playerInfo = new PlayerInfo("Player 1", 2);
 
         Debug.Log("Current State: " + currentState);
         //gameObject.GetComponent<WriteInFile>().enabled=true;
@@ -103,10 +111,15 @@ public class behaviour : MonoBehaviour
 
 
 
-        if (TextMeshPTimer.text != "" && !(hasFood & currentState == 2))
+        if (timerOn)
         {
             secondsCount += Time.deltaTime;
-            TextMeshPTimer.text = minuteCount.ToString("00") + ":" + ((int)secondsCount).ToString("00");
+
+            if (minuteCount > 0)
+                TextMeshPTimer.text = minuteCount.ToString("00") + ":" + ((int)secondsCount).ToString("00");
+            else
+                TextMeshPTimer.text = ((int)secondsCount).ToString();
+
             if (secondsCount >= 60)
             {
                 minuteCount++;
@@ -306,9 +319,12 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         //yield return new WaitForSeconds (4);
         PlayerText.SetActive(false);
+        //leaderboard.Start();
+        //leaderboard.UpdateLeaderBoardVisual();
         TextMeshPTimer.text = "00:00";
         TextMeshPTimer.color = new Color(255, 255, 255, 0.5f);
         TimerText.SetActive(true);
+        timerOn = true;
     }
 
     IEnumerator displayFoundFoodText()
@@ -322,7 +338,21 @@ public class behaviour : MonoBehaviour
 
     IEnumerator displayChallangeText()
     {
-        TextMeshP.text = "Congratulations! You have found all the food in " + minuteCount + " minutes and " + secondsCount + " seconds.";
+        TextMeshP.text = "Congratulations! You have found all the food in ";
+        if (minuteCount == 1)
+        {
+            TextMeshP.text += minuteCount + " minute and ";
+        } else if (minuteCount > 1)
+        {
+            TextMeshP.text += minuteCount + " minutes and ";
+        }
+        if ((int)secondsCount == 1)
+        {
+            TextMeshP.text += (int)secondsCount + " second.";
+        } else if ((int)secondsCount > 1)
+        {
+            TextMeshP.text += (int)secondsCount + " seconds.";
+        }
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
@@ -470,6 +500,7 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(false);
         TextMeshP.text = "Ask us a question!";
         PlayerText.SetActive(true);
+        yield return new WaitForSeconds(4);
     }
 
     IEnumerator countdownTimerText()
@@ -583,6 +614,7 @@ public class behaviour : MonoBehaviour
                 Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
                 OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
                 controller.SetMoveScaleMultiplier(0f);
+                timerOn = false;
                 StartCoroutine(displayChallangeText());
                 playerRigidBody.freezeRotation = true;
                 //Vector3 toPosition = (nest.transform.position - transform.position);
@@ -611,6 +643,9 @@ public class behaviour : MonoBehaviour
                 //hasFood = false;
                 compass.GetComponent<Compass>().setTarget(food.transform);
                 compass.GetComponent<Renderer>().material = RedArrow;
+
+                //leaderboard = new leaderboard();
+                //PlayerInfo playerInfo = new PlayerInfo("Player 1", 2);
 
                 GameObject f = GameObject.FindGameObjectWithTag("Food");
                 food.SetActive(true);

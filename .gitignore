@@ -1,5 +1,9 @@
 ant_orig/library/metadata/2d/2dbc450d14d2f0b4eb52f2268bbf47d0
 ant_orig/library/metadata/9e/9e57797062fe8cf48a2cffaf2bed9714
 ant_orig/library/metadata/e8/e8804166840494d42b7856edd44537c7
+ant_orig/library/Artifacts/93/93ae6b955a545307043b494336be17b6
+ant_orig/library/Artifacts/ac/acbd5e90c93cee6a328eba588b584ac2
+ant_orig/library/Artifacts/da/da034c3961cb271eee994759237a788a
 ant_orig/Temp/*
 lfs/*
+.git/objects/*
