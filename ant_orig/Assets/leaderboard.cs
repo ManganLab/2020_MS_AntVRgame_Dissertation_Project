@@ -24,8 +24,8 @@ public class leaderboard : MonoBehaviour
     //Use TextMeshPro To Populate The List
     public TextMeshPro userName;
     public TextMeshPro score;
-    public TextMeshPro display;
     //public GameObject PlayerText;
+
 
     //List To Hold "PlayerInfo" Objects
     List<PlayerInfo> collectedStats;
@@ -35,6 +35,15 @@ public class leaderboard : MonoBehaviour
     {
         collectedStats = new List<PlayerInfo>();
         LoadLeaderBoard();
+        Renderer renderer = gameObject.GetComponent<Renderer>();
+        var renderers = GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers)
+        {
+            if (r.CompareTag("Leaderboard"))
+            {
+                r.enabled = false;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -103,12 +112,12 @@ public class leaderboard : MonoBehaviour
     public void UpdateLeaderBoardVisual()
     {
         //Clear Current Displayed LeaderBoard
-        display.text = "";
+        //display.text = "";
 
         //Simply Loop Through The List And Add The Name And Score To The Display Text
         for (int i = 0; i <= collectedStats.Count - 1; i++)
         {
-            display.text += collectedStats[i].name + " : " + collectedStats[i].score + "\n";
+            //display.text += collectedStats[i].name + " : " + collectedStats[i].score + "\n";
         }
     }
 
@@ -141,6 +150,7 @@ public class leaderboard : MonoBehaviour
         PlayerPrefs.DeleteAll();
 
         //Clear Current Displayed LeaderBoard
-        display.text = "";
+        //display.text = "";
+        userName.text = "";
     }
 }
