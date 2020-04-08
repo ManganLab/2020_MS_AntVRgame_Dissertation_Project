@@ -95,7 +95,7 @@ public class behaviour : MonoBehaviour
 
         StartCoroutine(displayTutorialText());
 
-        leaderboard = new leaderboard();
+        leaderboard = GameObject.Find("Leaderboard").GetComponent<leaderboard>();
         PlayerInfo playerInfo = new PlayerInfo("Player 1", 2);
 
         Debug.Log("Current State: " + currentState);
@@ -417,6 +417,7 @@ public class behaviour : MonoBehaviour
             TextMeshP.text = "YOU WERE OUT BY " + "<color=red>" + angleToPosition + "</color> DEGREES";
         }
         //TextMeshP.text = "YOU WERE OUT BY " + "<color=" + guessColor + ">" + angleToPosition +  "</color> DEGREES";
+        leaderboard.SaveResult("Anonymous", minuteCount * 60 + (int)secondsCount, angleToPosition);
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
@@ -501,6 +502,7 @@ public class behaviour : MonoBehaviour
         TextMeshP.text = "Ask us a question!";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
+        PlayerText.SetActive(false);
     }
 
     IEnumerator countdownTimerText()
@@ -600,6 +602,9 @@ public class behaviour : MonoBehaviour
             hasFood = true;
             if (hasFood & currentState == 0)
             {
+                //leaderboard.Show();
+                //leaderboard.shown = true;
+                leaderboard.Show();
                 StartCoroutine(findMoreFoodText());
                 Instantiate(secondCupcake, spawnPoint.position, spawnPoint.rotation);
             }
@@ -643,9 +648,6 @@ public class behaviour : MonoBehaviour
                 //hasFood = false;
                 compass.GetComponent<Compass>().setTarget(food.transform);
                 compass.GetComponent<Renderer>().material = RedArrow;
-
-                //leaderboard = new leaderboard();
-                //PlayerInfo playerInfo = new PlayerInfo("Player 1", 2);
 
                 GameObject f = GameObject.FindGameObjectWithTag("Food");
                 food.SetActive(true);
