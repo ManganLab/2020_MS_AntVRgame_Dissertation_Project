@@ -11,6 +11,10 @@ public class behaviour : MonoBehaviour
     public GameObject tmp;
     private float displayTime;
     private float secondsCount;
+    private float rawSecondsCount;
+    private float firstFoodTime;
+    private float secondFoodTime;
+    private float thirdFoodTime;
     private int minuteCount;
     private bool showText;
     private bool showGui;
@@ -63,6 +67,7 @@ public class behaviour : MonoBehaviour
     private Color guessColor;
 
     private leaderboard leaderboard;
+    private string defaultPlayerName = "Player 1";
 
     // 0 SearchFreelyForFood
     // 1 Food found and bring it back home
@@ -96,7 +101,6 @@ public class behaviour : MonoBehaviour
         StartCoroutine(displayTutorialText());
 
         leaderboard = GameObject.Find("Leaderboard").GetComponent<leaderboard>();
-        PlayerInfo playerInfo = new PlayerInfo("Player 1", 2);
 
         Debug.Log("Current State: " + currentState);
         //gameObject.GetComponent<WriteInFile>().enabled=true;
@@ -114,6 +118,7 @@ public class behaviour : MonoBehaviour
         if (timerOn)
         {
             secondsCount += Time.deltaTime;
+            rawSecondsCount += Time.deltaTime;
 
             if (minuteCount > 0)
                 TextMeshPTimer.text = minuteCount.ToString("00") + ":" + ((int)secondsCount).ToString("00");
@@ -369,9 +374,9 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(2);
         PlayerText.SetActive(false);
-        TextMeshP.text = "You have <color=red>5</color> seconds";
+        TextMeshP.text = "You will have <color=red>5</color> seconds";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "5";
         TextMeshP.color = new Color(255, 0, 0);
@@ -400,6 +405,7 @@ public class behaviour : MonoBehaviour
 
     IEnumerator displayChallengeResult()
     {
+        leaderboard.SaveTheRest(thirdFoodTime, angleToPosition);
         TextMeshP.faceColor = new Color(255, 255, 255);
         TextMeshP.color = new Color(255, 255, 255);
         TextMeshP.richText = true;
@@ -417,7 +423,6 @@ public class behaviour : MonoBehaviour
             TextMeshP.text = "YOU WERE OUT BY " + "<color=red>" + angleToPosition + "</color> DEGREES";
         }
         //TextMeshP.text = "YOU WERE OUT BY " + "<color=" + guessColor + ">" + angleToPosition +  "</color> DEGREES";
-        leaderboard.SaveResult("Anonymous", minuteCount * 60 + (int)secondsCount, angleToPosition);
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
@@ -503,6 +508,8 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
+        leaderboard.LoadLeaderBoardStats();
+        leaderboard.ShowLeaderboard();
     }
 
     IEnumerator countdownTimerText()
@@ -602,19 +609,22 @@ public class behaviour : MonoBehaviour
             hasFood = true;
             if (hasFood & currentState == 0)
             {
-                //leaderboard.Show();
-                //leaderboard.shown = true;
-                leaderboard.Show();
+                firstFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
+                leaderboard.SaveFirstTime(defaultPlayerName, firstFoodTime);
+                leaderboard.ShowCheckpointLeaderboard();
                 StartCoroutine(findMoreFoodText());
                 Instantiate(secondCupcake, spawnPoint.position, spawnPoint.rotation);
             }
             if (hasFood & currentState == 1)
             {
+                secondFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
+                leaderboard.SaveSecondTime(secondFoodTime);
                 StartCoroutine(lastFoodText());
                 Instantiate(thirdCupcake, spawnPoint2.position, spawnPoint2.rotation);
             }
             if (hasFood & currentState == 2)
             {
+                thirdFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
                 OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
