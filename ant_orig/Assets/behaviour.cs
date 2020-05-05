@@ -67,7 +67,7 @@ public class behaviour : MonoBehaviour
     private Color guessColor;
 
     private leaderboard leaderboard;
-    private string defaultPlayerName = "Player 1";
+    private string defaultPlayerName = "Cur. Attempt";
 
     // 0 SearchFreelyForFood
     // 1 Food found and bring it back home
@@ -101,6 +101,7 @@ public class behaviour : MonoBehaviour
         StartCoroutine(displayTutorialText());
 
         leaderboard = GameObject.Find("Leaderboard").GetComponent<leaderboard>();
+        leaderboard.Start();
 
         Debug.Log("Current State: " + currentState);
         //gameObject.GetComponent<WriteInFile>().enabled=true;
@@ -150,6 +151,7 @@ public class behaviour : MonoBehaviour
             Debug.Log("Target Direction " + targetDir);
             StartCoroutine(displayChallengeResult());
             challengeDone = false;
+            // Enabling player movement
             controller.SetMoveScaleMultiplier(1f);
             playerRigidBody.freezeRotation = false;
             //antEyeRunning = true;
@@ -299,6 +301,10 @@ public class behaviour : MonoBehaviour
 
     IEnumerator displayTutorialText()
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+        // Disabling player movement
+        controller.SetMoveScaleMultiplier(0f);
         PlayerText.SetActive(true);
         yield return new WaitUntil(() => Input.anyKey);
         PlayerText.SetActive(false);
@@ -306,27 +312,47 @@ public class behaviour : MonoBehaviour
         TextMeshP.color = new Color(0, 0, 0);
         TextMeshP.fontSize = 18;
         PlayerText.SetActive(true);
-        //yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Find some food and bring it home!";
         PlayerText.SetActive(true);
-        //yield return new WaitForSeconds (4);
+        yield return new WaitForSeconds (3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Note that you will be timed while doing this";
         PlayerText.SetActive(true);
-        //yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Use the joystick to move forward";
         PlayerText.SetActive(true);
-        //yield return new WaitForSeconds (4);
+        yield return new WaitForSeconds(3);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "Movement will be enabled shortly";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds (3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Rotate your head to change direction";
         PlayerText.SetActive(true);
-        //yield return new WaitForSeconds (4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
-        //leaderboard.Start();
-        //leaderboard.UpdateLeaderBoardVisual();
-        TextMeshPTimer.text = "00:00";
+        TextMeshP.text = "Good luck!";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds (2);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "3";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "2";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        TextMeshP.text = "1";
+        PlayerText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlayerText.SetActive(false);
+        // Enabling player movement
+        controller.SetMoveScaleMultiplier(0f);
+        TextMeshPTimer.text = "0";
         TextMeshPTimer.color = new Color(255, 255, 255, 0.5f);
         TimerText.SetActive(true);
         timerOn = true;
@@ -374,6 +400,7 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(2);
         PlayerText.SetActive(false);
+        leaderboard.HideCheckpointLeaderboard();
         TextMeshP.text = "You will have <color=red>5</color> seconds";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(3);
@@ -405,7 +432,9 @@ public class behaviour : MonoBehaviour
 
     IEnumerator displayChallengeResult()
     {
-        leaderboard.SaveTheRest(thirdFoodTime, angleToPosition);
+        //Rounding angle to 2 decimal place
+        angleToPosition = Mathf.Round(angleToPosition * 100.0f) / 100.0f;
+        leaderboard.SaveAngle(angleToPosition);
         TextMeshP.faceColor = new Color(255, 255, 255);
         TextMeshP.color = new Color(255, 255, 255);
         TextMeshP.richText = true;
@@ -611,6 +640,7 @@ public class behaviour : MonoBehaviour
             {
                 firstFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 leaderboard.SaveFirstTime(defaultPlayerName, firstFoodTime);
+                leaderboard.LoadCheckpointLeaderBoardStats(1);
                 leaderboard.ShowCheckpointLeaderboard();
                 StartCoroutine(findMoreFoodText());
                 Instantiate(secondCupcake, spawnPoint.position, spawnPoint.rotation);
@@ -619,15 +649,21 @@ public class behaviour : MonoBehaviour
             {
                 secondFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 leaderboard.SaveSecondTime(secondFoodTime);
+                leaderboard.LoadCheckpointLeaderBoardStats(2);
+                leaderboard.ShowCheckpointLeaderboard();
                 StartCoroutine(lastFoodText());
                 Instantiate(thirdCupcake, spawnPoint2.position, spawnPoint2.rotation);
             }
             if (hasFood & currentState == 2)
             {
                 thirdFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
+                leaderboard.SaveThirdTime(thirdFoodTime);
+                leaderboard.LoadCheckpointLeaderBoardStats(3);
+                leaderboard.ShowCheckpointLeaderboard();
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
                 OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+                // Disabling player movement
                 controller.SetMoveScaleMultiplier(0f);
                 timerOn = false;
                 StartCoroutine(displayChallangeText());
@@ -652,6 +688,7 @@ public class behaviour : MonoBehaviour
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
                 OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
+                // Disabling player movement
                 controller.SetMoveScaleMultiplier(0f);
                 StartCoroutine(displayFinishedText());
                 //StartCoroutine(displayChageVector());

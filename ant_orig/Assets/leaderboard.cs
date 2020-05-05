@@ -7,6 +7,7 @@ using System.Linq;
 using TMPro;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 
 // Leaderboard script, based on the following source: https://www.grimoirehex.com/unity-3d-local-leaderboard/
 
@@ -98,10 +99,16 @@ public class leaderboard : MonoBehaviour
         System.IO.File.AppendAllText(filename, csvLine);
     }
 
-    public void SaveTheRest(float time, float angle)
+    public void SaveThirdTime(float time)
     {
         string csvLine = time.ToString() + ",";
         System.IO.File.AppendAllText(filename, csvLine);
+    }
+
+    public void SaveAngle(float angle)
+    {
+        string csvLine = angle.ToString();
+        System.IO.File.AppendAllText(filename, csvLine + Environment.NewLine);
     }
 
     // Saves a new complete entry (result) to the csv file
@@ -142,7 +149,7 @@ public class leaderboard : MonoBehaviour
             print("Leaderboard disabled");
         }
         // Enable/Disable checkpoint leaderboard
-        if (boardShown && !boardPrevShown)
+        if (checkpointBoardShown && !checkpointBoardPrevShown)
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Checkpoint Leaderboard"))
             {
@@ -155,7 +162,7 @@ public class leaderboard : MonoBehaviour
             checkpointBoardPrevShown = true;
             print("Leaderboard enabled");
         }
-        else if (boardPrevShown && !boardShown)
+        else if (checkpointBoardPrevShown && !checkpointBoardShown)
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Checkpoint Leaderboard"))
             {
@@ -170,25 +177,11 @@ public class leaderboard : MonoBehaviour
         }
     }
 
-    /*public void SubmitButton()
-    {
-        //Create Object Using Values From InputFields, This Is Done So That A Name And Score Can Easily Be Moved/Sorted At The Same Time
-        PlayerInfo stats = new PlayerInfo(name.text, int.Parse(score.text));//Depending On How You Obtain The Score, It May Be Necessary To Parse To Integer
-
-        //Add The New Player Info To The List
-        collectedStats.Add(stats);
-
-        //Clear InputFields Now That The Object Has Been Created
-        name.text = "";
-        score.text = "";
-
-        //Start Sorting Method To Place Object In Correct Index Of List
-        SortStats();
-    }*/
-
-    public void SortStats()
+    //Sorting the stats by their overall score
+    public void SortStatsByScore()
     {
         latestEntry = collectedStats.Last();
+
         //Bubble sort requires nxn passes for a list of n elements
         for (int i = 1; i < collectedStats.Count; i++)
         {
@@ -198,10 +191,10 @@ public class leaderboard : MonoBehaviour
                 //If The Current Score Is Higher Than The Score Above It , Swap
                 if (collectedStats[j].score < collectedStats[j + 1].score)
                 {
-                    //Temporary variable to hold small score
+                    //Temporary variable to hold smaller score
                     PlayerInfo tempInfo = collectedStats[j + 1];
 
-                    // Replace small score with big score
+                    // Replace small score with bigger score
                     collectedStats[j + 1] = collectedStats[j];
 
                     //Set small score closer to the end of the list by placing it at "i" rather than "i-1" 
@@ -209,52 +202,97 @@ public class leaderboard : MonoBehaviour
                 }
             }
         }
-
-        //Update PlayerPref That Stores Leaderboard Values
-        UpdateLeaderBoardVisual();
     }
 
-    /*public void UpdatePlayerPrefsString()
+    //Sorting the stats by the time at checkpoint 1, 2 or 3
+    public void SortStatsByTime(int checkpoint)
     {
-        //Start With A Blank String
-        string stats = "";
+        latestEntry = collectedStats.Last();
 
-        //Add Each Name And Score From The Collection To The String
-        for (int i = 0; i < collectedStats.Count; i++)
+        //Bubble sort requires nxn passes for a list of n elements
+        for (int i = 1; i < collectedStats.Count; i++)
         {
-            //Be Sure To Add A Comma To Both The Name And Score, It Will Be Used To Separate The String Later
-            stats += collectedStats[i].name + ",";
-            stats += collectedStats[i].time + ",";
-            stats += collectedStats[i].angle + ",";
-            stats += collectedStats[i].score + ",";
+            //Start at the beginning of the list and compare the score with the one below it
+            for (int j = 0; j < collectedStats.Count - i; j++)
+            {
+                if (checkpoint == 1)
+                {
+                    //If The Current Time Is Lower Than The Score Above It , Swap
+                    if (collectedStats[j].time1 > collectedStats[j + 1].time1)
+                    {
+                        //Temporary variable to hold smaller time
+                        PlayerInfo tempInfo = collectedStats[j + 1];
+
+                        // Replace smaller time with bigger time
+                        collectedStats[j + 1] = collectedStats[j];
+
+                        //Set smaller time closer to the end of the list by placing it at "i" rather than "i-1" 
+                        collectedStats[j] = tempInfo;
+                    }
+                }
+                else if (checkpoint == 2)
+                {
+                    //If The Current Time Is Lower Than The Score Above It , Swap
+                    if (collectedStats[j].time2 > collectedStats[j + 1].time2)
+                    {
+                        //Temporary variable to hold smaller time
+                        PlayerInfo tempInfo = collectedStats[j + 1];
+
+                        // Replace smaller time with bigger time
+                        collectedStats[j + 1] = collectedStats[j];
+
+                        //Set smaller time closer to the end of the list by placing it at "i" rather than "i-1" 
+                        collectedStats[j] = tempInfo;
+                    }
+                }
+                else if (checkpoint == 3)
+                {
+                    //If The Current Time Is Lower Than The Score Above It , Swap
+                    if (collectedStats[j].time3 > collectedStats[j + 1].time3)
+                    {
+                        //Temporary variable to hold smaller time
+                        PlayerInfo tempInfo = collectedStats[j + 1];
+
+                        // Replace smaller time with bigger time
+                        collectedStats[j + 1] = collectedStats[j];
+
+                        //Set smaller time closer to the end of the list by placing it at "i" rather than "i-1" 
+                        collectedStats[j] = tempInfo;
+                    }
+                }
+            }
         }
 
-        //Add The String To The PlayerPrefs, This Allows The Information To Be Saved Even When The Game Is Turned Off
-        PlayerPrefs.SetString("LeaderBoards", stats);
-
-        //Now Update The On Screen LeaderBoard
-        UpdateLeaderBoardVisual();
-    }*/
+        UpdateCheckpointLeaderBoardVisual(checkpoint);
+    }
 
     public void UpdateLeaderBoardVisual()
     {
-        //Clear Current Displayed LeaderBoard
-        ranks.text = "";
-        names.text = "";
-        times.text = "";
-        angles.text = "";
-        scores.text = "";
-        print("Here!");
-
-        //Simply Loop Through The List And Add The Data To The Display Text
-        for (int i = 0; i < collectedStats.Count; i++)
+        int latestIndex = collectedStats.IndexOf(latestEntry);
+        List<int> indexesToTry = new List<int>();
+        indexesToTry.Add(0);
+        if (latestIndex > 0)
+            indexesToTry.Add(latestIndex - 1);
+        indexesToTry.Add(latestIndex);
+        if (latestIndex < collectedStats.Count - 2)
+            indexesToTry.Add(latestIndex + 1);
+        indexesToTry.Add(collectedStats.Count - 1);
+        int previousIndex = 0;
+        print(String.Join(", ", indexesToTry));
+        //Loop through the indexes in the list (ignoring duplicates) and display their stats
+        foreach (int index in indexesToTry.Distinct())
         {
-            //Display up to 6 rows (plus the headers)
-            if (i >= 6)
-                break;
+            if (index - previousIndex > 1)
+            {
+                ranks.text += "...\n";
+                names.text += "...\n";
+                times.text += "...\n";
+                angles.text += "...\n";
+                scores.text += "...\n";
 
-            //Make latest entry red, so it is easily identifiable
-            if (collectedStats[i] == latestEntry)
+            }
+            //Make current attempt red, so it is easily identifiable
+            if (collectedStats[index] == latestEntry)
             {
                 ranks.text += "<color=red>";
                 names.text += "<color=red>";
@@ -263,13 +301,13 @@ public class leaderboard : MonoBehaviour
                 scores.text += "<color=red>";
             }
 
-            ranks.text += (i + 1).ToString() + "\n";
-            names.text += collectedStats[i].name + "\n";
-            times.text += collectedStats[i].time3.ToString() + "\n";
-            angles.text += collectedStats[i].angle.ToString() + "\n";
-            scores.text += collectedStats[i].score.ToString() + "\n";
+            ranks.text += (index + 1).ToString() + "\n";
+            names.text += collectedStats[index].name + "\n";
+            times.text += collectedStats[index].time3.ToString() + "\n";
+            angles.text += collectedStats[index].angle.ToString() + "\n";
+            scores.text += collectedStats[index].score.ToString() + "\n";
 
-            if (collectedStats[i] == latestEntry)
+            if (collectedStats[index] == latestEntry)
             {
                 ranks.text += "</color>";
                 names.text += "</color>";
@@ -277,6 +315,56 @@ public class leaderboard : MonoBehaviour
                 angles.text += "</color>";
                 scores.text += "</color>";
             }
+            previousIndex = index;
+        }
+    }
+
+    public void UpdateCheckpointLeaderBoardVisual(int checkpoint)
+    {
+        int latestIndex = collectedStats.IndexOf(latestEntry);
+        List<int> indexesToTry = new List<int>();
+        indexesToTry.Add(0);
+        if (latestIndex > 0)
+            indexesToTry.Add(latestIndex - 1);
+        indexesToTry.Add(latestIndex);
+        if (latestIndex < collectedStats.Count - 2)
+            indexesToTry.Add(latestIndex + 1);
+        indexesToTry.Add(collectedStats.Count - 1);
+        int previousIndex = 0;
+        //Loop through the indexes in the list (ignoring duplicates) and display their stats
+        foreach (int index in indexesToTry.Distinct())
+        {
+            if (index - previousIndex > 1)
+            {
+                checkpointRanks.text += "...\n";
+                checkpointNames.text += "...\n";
+                checkpointTimes.text += "...\n";
+
+            }
+            //Make current attempt red, so it is easily identifiable
+            if (collectedStats[index] == latestEntry)
+            {
+                checkpointRanks.text += "<color=red>";
+                checkpointNames.text += "<color=red>";
+                checkpointTimes.text += "<color=red>";
+            }
+
+            checkpointRanks.text += (index + 1).ToString() + "\n";
+            checkpointNames.text += collectedStats[index].name + "\n";
+            if (checkpoint == 1)
+                checkpointTimes.text += collectedStats[index].time1.ToString() + "\n";
+            else if (checkpoint == 2)
+                checkpointTimes.text += collectedStats[index].time2.ToString() + "\n";
+            else
+                checkpointTimes.text += collectedStats[index].time3.ToString() + "\n";
+
+            if (collectedStats[index] == latestEntry)
+            {
+                checkpointRanks.text += "</color>";
+                checkpointNames.text += "</color>";
+                checkpointTimes.text += "</color>";
+            }
+            previousIndex = index;
         }
     }
 
@@ -284,18 +372,19 @@ public class leaderboard : MonoBehaviour
     {
         if (angle < 1)
             angle = 1;
+
         float score = (1 / time + 1 / angle) * 100;
+        score = Mathf.Round(score * 100.0f) / 100.0f;
         return score;
     }
 
     public void LoadLeaderBoardStats()
     {
         ClearPrefs();
-        String fileData = System.IO.File.ReadAllText(filename);
-        String[] lines = fileData.Split('\n');
+        string[] lines = System.IO.File.ReadAllLines(filename);
 
-        //Results stored in csv file in chronological order (last line will be blank, ready to store new data)
-        for (int i = 0; i < lines.Length - 1; i++)
+        //Results stored in csv file in chronological order (last line will be the current attempt)
+        for (int i = 0; i < lines.Length; i++)
         {
             String[] lineData = lines[i].Split(',');
             //Name, time (in seconds) and size of angle (in degrees) they were off by when looking for their home
@@ -311,7 +400,39 @@ public class leaderboard : MonoBehaviour
         }
 
         //Sort stats by score (and then display them on the screen)
-        SortStats();
+        SortStatsByScore();
+
+        //Update LeaderBoard on screen
+        UpdateLeaderBoardVisual();
+    }
+
+    public void LoadCheckpointLeaderBoardStats(int checkpoint)
+    {
+        ClearCheckpointPrefs();
+        string[] lines = System.IO.File.ReadAllLines(filename);
+
+        //Results stored in csv file in chronological order (last line will be the current attempt)
+        for (int i = 0; i < lines.Length; i++)
+        {
+            String[] lineData = lines[i].Split(',');
+            //Name, time (in seconds) and size of angle (in degrees) they were off by when looking for their home
+            String name = lineData[0];
+            float time1 = float.Parse(lineData[1]);
+            float time2, time3, angle, score;
+            time2 = time3 = angle = score = 0f;
+            if (checkpoint > 1)
+            {
+                time2 = float.Parse(lineData[2]);
+
+                if (checkpoint > 2)
+                {
+                    time3 = float.Parse(lineData[3]);
+                }
+            }
+            PlayerInfo loadedInfo = new PlayerInfo(name, time1, time2, time3, angle, score);
+            collectedStats.Add(loadedInfo);
+        }
+        SortStatsByTime(checkpoint);
     }
 
     public void ClearPrefs()
@@ -326,5 +447,34 @@ public class leaderboard : MonoBehaviour
         times.text = "";
         angles.text = "";
         scores.text = "";
+    }
+
+    public void ClearCheckpointPrefs()
+    {
+        //Use This To Delete All Names And Scores From The LeaderBoard
+        PlayerPrefs.DeleteAll();
+        collectedStats.Clear();
+
+        //Clear Current Displayed Checkpoint LeaderBoard
+        checkpointRanks.text = "";
+        checkpointNames.text = "";
+        checkpointTimes.text = "";
+    }
+
+    void OnApplicationQuit()
+    {
+        string[] lines = System.IO.File.ReadAllLines(filename);
+        int deleteLines = 0;
+
+        //If last char of last line is a comma (ie: line is not complete), delete last line
+        if (lines.Last().Last() == ',')
+            deleteLines = 1;
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        for (int i = 0; i < (lines.Length - deleteLines); i++)
+            sb.AppendLine(lines[i].Replace("Cur. Attempt", "Prev. Attempt"));
+
+        System.IO.File.WriteAllText(filename, sb.ToString());
     }
 }
