@@ -278,7 +278,6 @@ public class leaderboard : MonoBehaviour
             indexesToTry.Add(latestIndex + 1);
         indexesToTry.Add(collectedStats.Count - 1);
         int previousIndex = 0;
-        print(String.Join(", ", indexesToTry));
         //Loop through the indexes in the list (ignoring duplicates) and display their stats
         foreach (int index in indexesToTry.Distinct())
         {
@@ -370,9 +369,6 @@ public class leaderboard : MonoBehaviour
 
     private float calculateScore(float time, float angle)
     {
-        if (angle < 1)
-            angle = 1;
-
         float score = (1 / time + 1 / angle) * 100;
         score = Mathf.Round(score * 100.0f) / 100.0f;
         return score;
