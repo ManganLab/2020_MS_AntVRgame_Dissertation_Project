@@ -338,6 +338,7 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds (2);
         PlayerText.SetActive(false);
+        TextMeshP.color = new Color(255, 0, 0);
         TextMeshP.text = "3";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(1);
@@ -350,8 +351,9 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(1);
         PlayerText.SetActive(false);
+        TextMeshP.color = new Color(0, 0, 0);
         // Enabling player movement
-        controller.SetMoveScaleMultiplier(0f);
+        controller.SetMoveScaleMultiplier(1f);
         TextMeshPTimer.text = "0";
         TextMeshPTimer.color = new Color(255, 255, 255, 0.5f);
         TimerText.SetActive(true);
