@@ -61,28 +61,30 @@ public class leaderboard : MonoBehaviour
     public void Start()
     {
         collectedStats = new List<PlayerInfo>();
+        LoadLeaderBoardStats();
+        ShowLeaderBoard();
     }
 
     // Shows the leaderboard on-screen for the player
-    public void ShowLeaderboard()
+    public void ShowLeaderBoard()
     {
         boardShown = true;
     }
 
     // Hides the leaderboard on-screen for the player
-    public void HideLeaderboard()
+    public void HideLeaderBoard()
     {
         boardShown = false;
     }
 
     // Shows the checkpoint leaderboard on-screen for the player
-    public void ShowCheckpointLeaderboard()
+    public void ShowCheckpointLeaderBoard()
     {
         checkpointBoardShown = true;
     }
 
     // Hides the checkpoint leaderboard on-screen for the player
-    public void HideCheckpointLeaderboard()
+    public void HideCheckpointLeaderBoard()
     {
         checkpointBoardShown = false;
     }

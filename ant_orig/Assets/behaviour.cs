@@ -402,7 +402,7 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(2);
         PlayerText.SetActive(false);
-        leaderboard.HideCheckpointLeaderboard();
+        leaderboard.HideCheckpointLeaderBoard();
         TextMeshP.text = "You will have <color=red>5</color> seconds";
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(3);
@@ -540,7 +540,7 @@ public class behaviour : MonoBehaviour
         yield return new WaitForSeconds(4);
         PlayerText.SetActive(false);
         leaderboard.LoadLeaderBoardStats();
-        leaderboard.ShowLeaderboard();
+        leaderboard.ShowLeaderBoard();
     }
 
     IEnumerator countdownTimerText()
@@ -643,7 +643,7 @@ public class behaviour : MonoBehaviour
                 firstFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 leaderboard.SaveFirstTime(defaultPlayerName, firstFoodTime);
                 leaderboard.LoadCheckpointLeaderBoardStats(1);
-                leaderboard.ShowCheckpointLeaderboard();
+                leaderboard.ShowCheckpointLeaderBoard();
                 StartCoroutine(findMoreFoodText());
                 Instantiate(secondCupcake, spawnPoint.position, spawnPoint.rotation);
             }
@@ -652,7 +652,7 @@ public class behaviour : MonoBehaviour
                 secondFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 leaderboard.SaveSecondTime(secondFoodTime);
                 leaderboard.LoadCheckpointLeaderBoardStats(2);
-                leaderboard.ShowCheckpointLeaderboard();
+                leaderboard.ShowCheckpointLeaderBoard();
                 StartCoroutine(lastFoodText());
                 Instantiate(thirdCupcake, spawnPoint2.position, spawnPoint2.rotation);
             }
@@ -661,7 +661,7 @@ public class behaviour : MonoBehaviour
                 thirdFoodTime = Mathf.Round(rawSecondsCount * 100.0f) / 100.0f;
                 leaderboard.SaveThirdTime(thirdFoodTime);
                 leaderboard.LoadCheckpointLeaderBoardStats(3);
-                leaderboard.ShowCheckpointLeaderboard();
+                leaderboard.ShowCheckpointLeaderBoard();
                 GameObject player = GameObject.FindGameObjectWithTag("Player");
                 Rigidbody playerRigidBody = player.GetComponent<Rigidbody>();
                 OVRPlayerController controller = player.GetComponent<OVRPlayerController>();
