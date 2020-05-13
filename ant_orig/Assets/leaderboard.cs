@@ -61,8 +61,6 @@ public class leaderboard : MonoBehaviour
     public void Start()
     {
         collectedStats = new List<PlayerInfo>();
-        LoadLeaderBoardStats();
-        ShowLeaderBoard();
     }
 
     // Shows the leaderboard on-screen for the player

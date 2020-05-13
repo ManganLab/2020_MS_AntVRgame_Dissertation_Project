@@ -392,11 +392,11 @@ public class behaviour : MonoBehaviour
         TimerText.SetActive(false);
         TextMeshP.text = "Now you need to take the food back!";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Which direction do you think home is?";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Turn towards it";
         PlayerText.SetActive(true);
@@ -493,13 +493,9 @@ public class behaviour : MonoBehaviour
         PlayerText.SetActive(true);
         yield return new WaitForSeconds(2);
         PlayerText.SetActive(false);
-        TextMeshP.text = "You have found some food!";
-        PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
-        PlayerText.SetActive(false);
         TextMeshP.text = "You need to find more!";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
     }
 
@@ -507,15 +503,11 @@ public class behaviour : MonoBehaviour
     {
         TextMeshP.text = "Almost there!";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "You need to find one more piece!";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
-        PlayerText.SetActive(false);
-        TextMeshP.text = "Look around until you see it!";
-        PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
     }
 
@@ -525,19 +517,19 @@ public class behaviour : MonoBehaviour
         TextMeshP.text = "Congratulations!";
         TextMeshP.faceColor = new Color(255, 255, 255);
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "You have completed <color=red>the Ant Navigation Challenge!</color>";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Want to know more?";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         TextMeshP.text = "Ask us a question!";
         PlayerText.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         PlayerText.SetActive(false);
         leaderboard.LoadLeaderBoardStats();
         leaderboard.ShowLeaderBoard();
