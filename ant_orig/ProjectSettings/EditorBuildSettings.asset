@@ -9,6 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/AntWorld.unity
     guid: 6a0f255fff3612248977c8df04653f18
   - enabled: 1
-    path: Assets/Scenes/newGame.unity
+    path: Assets/Scenes/immersiveScene.unity
     guid: d088035ee9809c94783bf0beceed9305
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: e3dce9822ff792f499bfa6c1628d1435,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 3f20a1be3acb2c844bf817d3ec9a5cf8,
+      type: 2}

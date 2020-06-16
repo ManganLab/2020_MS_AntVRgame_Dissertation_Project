@@ -90,12 +90,13 @@ public class OVRNetwork
 				return;
 			}
 
-			IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+			IPAddress localAddr = IPAddress.Any;
 
 			tcpListener = new TcpListener(localAddr, listeningPort);
 			try
 			{
 				tcpListener.Start();
+				Debug.LogFormat("TcpListener started. Local endpoint: {0}", tcpListener.LocalEndpoint.ToString());
 			}
 			catch (SocketException e)
 			{
@@ -158,6 +159,10 @@ public class OVRNetwork
 				{
 					Debug.LogWarningFormat("[OVRNetworkTcpServer] can't accept new client: {0}", e.Message);
 				}
+			}
+			catch (ObjectDisposedException)
+			{
+				// Do nothing. It happens when stop preview in editor, which is normal behavior.
 			}
 			catch (Exception e)
 			{
